@@ -21,4 +21,18 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-module.exports = { authenticateToken };
+
+const authorizeRoles = (...allowedRoles) => {
+    return (req, res, next) => {
+
+        const userRole = Number(req.user.role_id);
+        
+        if (!req.user || !allowedRoles.includes(userRole)) {
+            return res.status(403).json({ error: "Access denied. Insufficient permissions." });
+        }
+        next();
+    };
+};
+
+
+module.exports = { authenticateToken, authorizeRoles };

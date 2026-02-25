@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('./db');
 require('dotenv').config();
-const { authenticateToken } = require('./middleware/authMiddleware');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
 const app = express();
 app.use(cors());
@@ -89,6 +89,13 @@ app.get('/auth/profile', authenticateToken, (req, res) => {
             message: "Welcome to your protected profile!",
             user: results[0]
         });
+    });
+});
+
+
+app.get('/admin/dashboard', authenticateToken, authorizeRoles(1), (req, res) => {
+    res.status(200).json({
+        message: "Welcome Admin! You have special access to this route."
     });
 });
 
